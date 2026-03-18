@@ -32,15 +32,9 @@
 ## 🚀 Quick Setup
 
 ```
-# 1. Create your repo from template:
-#    github.com/copilot-dev-days/agent-lab-typescript
-# 2. Enable GitHub Pages:
-#    Settings > Pages > GitHub Actions
-#
-# Then choose one:
-# A) Clone your repo in VS Code
-# B) Create a Codespace from your repo (Code > Codespaces)
-#
+# 1. Create repo from template: github.com/copilot-dev-days/agent-lab-typescript
+# 2. Enable Pages: Settings > Pages > GitHub Actions
+# 3. Choose one: clone repo in VS Code OR create a Codespace from your repo
 # Then run:
 # /setup
 ```
