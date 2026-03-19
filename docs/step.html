@@ -198,6 +198,70 @@
             });
         }
 
+        async function copyCodeToClipboard(text) {
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(text);
+                return;
+            }
+
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.setAttribute('readonly', '');
+            textarea.style.position = 'absolute';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        }
+
+        function setupCodeBlockCopyButtons() {
+            const container = document.getElementById('markdown-content');
+            const codeBlocks = container.querySelectorAll('pre');
+
+            codeBlocks.forEach((pre, index) => {
+                const code = pre.querySelector('code');
+                const codeText = code?.textContent?.trim();
+                if (!codeText) return;
+
+                const copyButton = document.createElement('button');
+                copyButton.type = 'button';
+                copyButton.className = 'code-copy-btn';
+                copyButton.textContent = 'Copy';
+                copyButton.setAttribute('aria-label', `Copy code block ${index + 1}`);
+
+                const liveRegion = document.createElement('span');
+                liveRegion.className = 'sr-only';
+                liveRegion.setAttribute('aria-live', 'polite');
+
+                let resetTimer;
+                const resetButton = () => {
+                    copyButton.textContent = 'Copy';
+                    copyButton.dataset.state = 'idle';
+                    liveRegion.textContent = '';
+                };
+
+                copyButton.addEventListener('click', async () => {
+                    clearTimeout(resetTimer);
+
+                    try {
+                        await copyCodeToClipboard(code.textContent);
+                        copyButton.textContent = 'Copied!';
+                        copyButton.dataset.state = 'copied';
+                        liveRegion.textContent = 'Code copied to clipboard';
+                    } catch {
+                        copyButton.textContent = 'Failed';
+                        copyButton.dataset.state = 'error';
+                        liveRegion.textContent = 'Unable to copy code';
+                    }
+
+                    resetTimer = setTimeout(resetButton, 2000);
+                });
+
+                pre.append(copyButton, liveRegion);
+            });
+        }
+
         async function loadContent() {
             const idx = getCurrentStepIndex();
             if (idx === -1) {
@@ -225,6 +289,7 @@
                 marked.setOptions({ breaks: true, gfm: true });
                 document.getElementById('markdown-content').innerHTML = marked.parse(md);
                 setupInteractiveCheckboxes(step.id);
+                setupCodeBlockCopyButtons();
 
                 if (step.id === '05-complete') {
                     setTimeout(celebrate, 500);
