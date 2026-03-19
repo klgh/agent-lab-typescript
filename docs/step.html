@@ -242,9 +242,13 @@
                     copyButton.dataset.state = 'idle';
                     liveRegion.textContent = '';
                 };
+                let resetTimer;
 
                 copyButton.addEventListener('click', async () => {
-                    clearTimeout(resetTimer);
+                    if (resetTimer) {
+                        clearTimeout(resetTimer);
+                        pendingCopyResetTimers.delete(resetTimer);
+                    }
 
                     try {
                         await copyCodeToClipboard(codeText);
@@ -257,7 +261,7 @@
                         liveRegion.textContent = 'Unable to copy code';
                     }
 
-                    const resetTimer = setTimeout(() => {
+                    resetTimer = setTimeout(() => {
                         pendingCopyResetTimers.delete(resetTimer);
                         resetButton();
                     }, 2000);
