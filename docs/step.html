@@ -245,7 +245,7 @@
                     clearTimeout(resetTimer);
 
                     try {
-                        await copyCodeToClipboard(code.textContent);
+                        await copyCodeToClipboard(codeText);
                         copyButton.textContent = 'Copied!';
                         copyButton.dataset.state = 'copied';
                         liveRegion.textContent = 'Code copied to clipboard';
