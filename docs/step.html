@@ -368,8 +368,8 @@
           var t=li.dataset.locale==='pt-BR'?'pt_BR':li.dataset.locale;
           if(t===locale){close();return;}
           var p=location.pathname;
-          if(locale!=='en')p=p.replace(new RegExp('/'+locale+'/'),'/');;
-          if(t!=='en')p=p.replace(/\/docs\//,'/docs/'+t+'/');
+          if(locale!=='en')p=p.replace(new RegExp('/'+locale+'/'),'/');
+          if(t!=='en'){var base=p.replace(/\/index\.html$/,'/');if(!base.endsWith('/'))base+='/';p=base+t+'/';}
           localStorage.setItem('preferred-locale',t);
           window.location.href=p+location.search;
         });
