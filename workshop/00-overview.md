@@ -1,19 +1,19 @@
 # 🎮 VS Code GitHub Copilot Agent Lab
-
 [← README](../README.md)
 
----
+- [ ] Latest VS Code **v1.113** (no update pending)
 
 > **Level:** Intermediate
 > **Stack:** TypeScript / Vite / Tailwind CSS
 
-Welcome to **Soc Ops** — a hands-on workshop where you'll transform a Social Bingo app using VS Code's Agent Mode with GitHub Copilot.
+Welcome to **Bingo Mixer** — a hands-on workshop where you'll transform a social bingo app using VS Code's Agent Mode with GitHub Copilot.
 
 ---
 
 ## 📋 Quick Checklist
 
-- [ ] Latest VS Code **v1.107** (no update pending)
+- [ ] Latest VS Code **v1.113** (no update pending)
+  - [ ] Make sure updates are not disabled
 - [ ] Signed in with GitHub (Copilot Free can not run cloud agent!)
 - [ ] Git & Node installed
 - [ ] Chat open and Agent ready for action

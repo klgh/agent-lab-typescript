@@ -26,7 +26,7 @@ export function GameScreen({
         >
           ← Back
         </button>
-        <h1 className="font-bold text-gray-900">Soc Ops</h1>
+        <h1 className="font-bold text-gray-900">Bingo Mixer</h1>
         <div className="w-16"></div>
       </header>
 

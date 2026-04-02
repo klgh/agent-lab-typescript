@@ -1,6 +1,6 @@
-# Soc Ops
+# Bingo Mixer
 
-Social Bingo game for in-person mixers. Find people who match the questions and get 5 in a row!
+Bingo Mixer is a social bingo game for in-person mixers. Find people who match the questions and get 5 in a row!
 
 📚 **[View Lab Guide](workshop/GUIDE.md)**
 🚀 **[Start with setup flow](workshop/01-setup.md)**

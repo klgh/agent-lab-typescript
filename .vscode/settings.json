@@ -1,9 +1,8 @@
 {
-  "chat.customAgentInSubagent.enabled": true,
-  "scm.repositories.selectionMode": "single",
   "chat.promptFilesRecommendations": {
     "setup": "resourceFilename == 'README.md'"
   },
+  "chat.tools.terminal.enableAutoApprove": true,
   "chat.tools.terminal.autoApprove": {
     "npm run lint": true,
     "npm run dev": true,
@@ -16,8 +15,12 @@
   "github.copilot.chat.githubMcpServer.toolsets": [
     "repos,issues,pull_requests,code_search,copilot,web_search"
   ],
-  "chat.viewTitle.enabled": true,
-  "chat.viewSessions.enabled": true,
-  "github.copilot.chat.cli.customAgents.enabled": true,
-  "scm.repositories.explorer": true
+  "workbench.browser.enableChatTools": true,
+  "github.copilot.chat.agentDebugLog.enabled": true,
+  "github.copilot.chat.agentDebugLog.fileLogging.enabled": true,
+  "imageCarousel.explorerContextMenu.enabled": true,
+  "imageCarousel.chat.enabled": true,
+  "chat.customizationsMenu.enabled": true,
+  "chat.useCustomizationsInParentRepositories": true,
+  "chat.useCustomAgentHooks": true
 }

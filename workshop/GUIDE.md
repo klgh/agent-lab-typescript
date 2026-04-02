@@ -1,9 +1,8 @@
-# Soc Ops — VS Code GitHub Copilot Agent Lab
-
+# Bingo Mixer — VS Code GitHub Copilot Agent Lab
 [← README](../README.md)
 
 ---
-
+- [ ] VS Code **v1.113+**
 > **Quick Reference Guide** — For detailed instructions, see the individual parts below.
 
 ---
@@ -22,7 +21,7 @@
 
 ## ⚡ Quick Checklist
 
-- [ ] VS Code **v1.107+**
+- [ ] VS Code **v1.113+**
 - [ ] GitHub Copilot (Pro/Business/Enterprise)
 - [ ] Git & Node 22+
 - [ ] Chat panel open
@@ -46,21 +45,22 @@
 ### Part 1: Context Engineering
 - [ ] Run /setup agent
 - [ ] Generate workspace instructions
-- [ ] Run background agent for linting
-- [ ] Run cloud agent for README
-- [ ] Review Tailwind 4 & frontend instructions
+- [ ] Dogfood the app with built-in browser
+- [ ] Create a custom dogfooding skill
+- [ ] Tour repo customizations
 
 ### Part 2: Design-First Frontend
 - [ ] Full UI redesign (Plan Mode)
 - [ ] Update copilot-instructions.md
-- [ ] Run cloud-explore for variations
+- [ ] Dogfood the redesign
 
 ### Part 3: Quiz Master
 - [ ] Generate custom quiz theme
-- [ ] Run Quiz Master as cloud agent
 
 ### Part 4: Multi-Agent Development
-- [ ] Scavenger Hunt mode (TDD Red → Green → Refactor)
+- [ ] Agent hooks — test gate
+- [ ] Four Corners bingo pattern (TDD)
+- [ ] Agent Debug Logs
 - [ ] Card Deck Shuffle mode (Pixel Jam)
 - [ ] UX Review
 

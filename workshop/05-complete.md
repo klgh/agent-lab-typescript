@@ -14,7 +14,8 @@ You've completed the **VS Code GitHub Copilot Agent Lab**!
 
 - ✅ A fully redesigned Social Bingo app
 - ✅ Custom quiz themes with Quiz Master agent
-- ✅ Scavenger Hunt mode (TDD-built)
+- ✅ Agent hooks for automated test gating
+- ✅ Four Corners bingo pattern (TDD-built)
 - ✅ Card Deck Shuffle mode (design-driven)
 - ✅ Comprehensive UX review
 

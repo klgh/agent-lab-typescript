@@ -6,6 +6,7 @@ import {
   getWinningSquareIds,
   type BingoSquareData,
 } from './bingoLogic';
+import { questions, FREE_SPACE } from '../data/questions';
 
 describe('bingoLogic', () => {
   describe('generateBoard', () => {
@@ -37,6 +38,25 @@ describe('bingoLogic', () => {
       const nonFreeSpaces = board.filter((square) => !square.isFreeSpace);
       nonFreeSpaces.forEach((square) => {
         expect(square.isMarked).toBe(false);
+      });
+    });
+
+    it('should have the FREE_SPACE text in the center', () => {
+      const board = generateBoard();
+      expect(board[12].text).toBe(FREE_SPACE);
+    });
+
+    it('should have unique question texts across non-free squares', () => {
+      const board = generateBoard();
+      const texts = board.filter((s) => !s.isFreeSpace).map((s) => s.text);
+      expect(new Set(texts).size).toBe(texts.length);
+    });
+
+    it('should only have text from the questions pool', () => {
+      const board = generateBoard();
+      const texts = board.filter((s) => !s.isFreeSpace).map((s) => s.text);
+      texts.forEach((text) => {
+        expect(questions).toContain(text);
       });
     });
 
@@ -103,6 +123,29 @@ describe('bingoLogic', () => {
       expect(newBoard[1].isMarked).toBe(mockBoard[1].isMarked);
       expect(newBoard[2].isMarked).toBe(mockBoard[2].isMarked);
     });
+
+    it('should create a new object for the toggled square (immutability)', () => {
+      const newBoard = toggleSquare(mockBoard, 0);
+      expect(newBoard[0]).not.toBe(mockBoard[0]);
+    });
+
+    it('should not create new objects for untouched squares', () => {
+      const newBoard = toggleSquare(mockBoard, 0);
+      expect(newBoard[1]).toBe(mockBoard[1]);
+      expect(newBoard[2]).toBe(mockBoard[2]);
+    });
+
+    it('should not change anything for a non-existent square ID', () => {
+      const newBoard = toggleSquare(mockBoard, 999);
+      expect(newBoard.map((s) => s.isMarked)).toEqual(mockBoard.map((s) => s.isMarked));
+    });
+
+    it('should support toggling the same square back and forth', () => {
+      const toggled = toggleSquare(mockBoard, 0);
+      expect(toggled[0].isMarked).toBe(true);
+      const toggledBack = toggleSquare(toggled, 0);
+      expect(toggledBack[0].isMarked).toBe(false);
+    });
   });
 
   describe('checkBingo', () => {
@@ -166,8 +209,6 @@ describe('bingoLogic', () => {
 
     it('should work with free space in center', () => {
       const board = generateBoard();
-      // The center (12) is already marked as free space
-      // Complete the middle row
       [10, 11, 12, 13, 14].forEach((i) => {
         board[i].isMarked = true;
       });
@@ -175,6 +216,93 @@ describe('bingoLogic', () => {
       expect(result).not.toBeNull();
       expect(result?.type).toBe('row');
       expect(result?.index).toBe(2);
+    });
+
+    it('should detect all 5 rows', () => {
+      for (let row = 0; row < 5; row++) {
+        const board = generateBoard();
+        for (let col = 0; col < 5; col++) {
+          board[row * 5 + col].isMarked = true;
+        }
+        const result = checkBingo(board);
+        expect(result).not.toBeNull();
+        expect(result?.type).toBe('row');
+        expect(result?.index).toBe(row);
+      }
+    });
+
+    it('should detect all 5 columns', () => {
+      for (let col = 0; col < 5; col++) {
+        const board = generateBoard();
+        for (let row = 0; row < 5; row++) {
+          board[row * 5 + col].isMarked = true;
+        }
+        const result = checkBingo(board);
+        expect(result).not.toBeNull();
+        expect(result?.type).toBe('column');
+        expect(result?.index).toBe(col);
+      }
+    });
+
+    it('should return null when only 4 of 5 in a row are marked', () => {
+      const board = generateBoard();
+      [0, 1, 2, 3].forEach((i) => {
+        board[i].isMarked = true;
+      });
+      expect(checkBingo(board)).toBeNull();
+    });
+
+    it('should return null when only 4 of 5 in a column are marked', () => {
+      const board = generateBoard();
+      [0, 5, 10, 15].forEach((i) => {
+        board[i].isMarked = true;
+      });
+      expect(checkBingo(board)).toBeNull();
+    });
+
+    it('should return null when only 4 of 5 in a diagonal are marked', () => {
+      const board = generateBoard();
+      [0, 6, 12, 18].forEach((i) => {
+        board[i].isMarked = true;
+      });
+      expect(checkBingo(board)).toBeNull();
+    });
+
+    it('should return the first winning line when multiple exist', () => {
+      const board = generateBoard();
+      [0, 1, 2, 3, 4, 5, 10, 15, 20].forEach((i) => {
+        board[i].isMarked = true;
+      });
+      const result = checkBingo(board);
+      expect(result).not.toBeNull();
+      expect(result?.type).toBe('row');
+      expect(result?.index).toBe(0);
+    });
+
+    it('should detect bingo on a fully marked board', () => {
+      const board = generateBoard();
+      board.forEach((square) => {
+        square.isMarked = true;
+      });
+      const result = checkBingo(board);
+      expect(result).not.toBeNull();
+    });
+
+    it('should return the correct squares array for a winning line', () => {
+      const board = generateBoard();
+      [0, 1, 2, 3, 4].forEach((i) => {
+        board[i].isMarked = true;
+      });
+      const result = checkBingo(board);
+      expect(result?.squares).toEqual([0, 1, 2, 3, 4]);
+    });
+
+    it('should not count scattered marks as a bingo', () => {
+      const board = generateBoard();
+      [0, 6, 2, 8, 20].forEach((i) => {
+        board[i].isMarked = true;
+      });
+      expect(checkBingo(board)).toBeNull();
     });
   });
 
@@ -214,6 +342,60 @@ describe('bingoLogic', () => {
       expect(result.has(12)).toBe(true);
       expect(result.has(18)).toBe(true);
       expect(result.has(24)).toBe(true);
+    });
+
+    it('should handle column winning line', () => {
+      const winningLine = {
+        type: 'column' as const,
+        index: 2,
+        squares: [2, 7, 12, 17, 22],
+      };
+      const result = getWinningSquareIds(winningLine);
+      expect(result.size).toBe(5);
+      [2, 7, 12, 17, 22].forEach((id) => {
+        expect(result.has(id)).toBe(true);
+      });
+    });
+  });
+
+  describe('integration: generateBoard + toggleSquare + checkBingo', () => {
+    it('should detect bingo after toggling an entire row', () => {
+      const board = generateBoard();
+      let current = board;
+      [0, 1, 2, 3, 4].forEach((i) => {
+        if (!current[i].isMarked) {
+          current = toggleSquare(current, i);
+        }
+      });
+      expect(checkBingo(current)).not.toBeNull();
+    });
+
+    it('should lose bingo after untoggling a square from a winning line', () => {
+      const board = generateBoard();
+      let current = board;
+      [0, 1, 2, 3, 4].forEach((i) => {
+        if (!current[i].isMarked) {
+          current = toggleSquare(current, i);
+        }
+      });
+      expect(checkBingo(current)).not.toBeNull();
+      current = toggleSquare(current, 0);
+      expect(checkBingo(current)).toBeNull();
+    });
+
+    it('should report correct winning square IDs from a detected bingo', () => {
+      const board = generateBoard();
+      let current = board;
+      const lastRowIds = [20, 21, 22, 23, 24];
+      lastRowIds.forEach((i) => {
+        if (!current[i].isMarked) {
+          current = toggleSquare(current, i);
+        }
+      });
+      const line = checkBingo(current);
+      expect(line).not.toBeNull();
+      const ids = getWinningSquareIds(line);
+      expect(ids).toEqual(new Set(lastRowIds));
     });
   });
 });
