@@ -1,12 +1,14 @@
-import type { BingoSquareData } from '../types';
-import { BingoBoard } from './BingoBoard';
+import type { BingoSquareData } from '../types'
+import { BingoBoard } from './BingoBoard'
 
 interface GameScreenProps {
-  board: BingoSquareData[];
-  winningSquareIds: Set<number>;
-  hasBingo: boolean;
-  onSquareClick: (squareId: number) => void;
-  onReset: () => void;
+  board: BingoSquareData[]
+  winningSquareIds: Set<number>
+  hasBingo: boolean
+  onSquareClick: (squareId: number) => void
+  onReset: () => void
+  audioEnabled: boolean
+  onToggleAudio: () => void
 }
 
 export function GameScreen({
@@ -15,41 +17,49 @@ export function GameScreen({
   hasBingo,
   onSquareClick,
   onReset,
+  audioEnabled,
+  onToggleAudio,
 }: GameScreenProps) {
   return (
-    <div className="flex flex-col min-h-full bg-gray-50">
-      {/* Header */}
-      <header className="flex items-center justify-between p-3 bg-white border-b border-gray-200">
+    <div className="checker-bg flex min-h-full flex-col">
+      <header className="flex items-center justify-between gap-2 border-b-2 border-[#1f1a6d] bg-[#ffe9fb] px-3 py-3 sm:px-4">
         <button
           onClick={onReset}
-          className="text-gray-500 text-sm px-3 py-1.5 rounded active:bg-gray-100"
-        >
-          ← Back
+          className="retro-button retro-button-secondary px-3 py-2 text-xs sm:text-sm">
+          New Board
         </button>
-        <h1 className="font-bold text-gray-900">Bingo Mixer</h1>
-        <div className="w-16"></div>
+        <h1 className="text-center text-sm font-black uppercase tracking-[0.08em] text-[#22177f] sm:text-base">
+          Bingo Mixer 99
+        </h1>
+        <button
+          onClick={onToggleAudio}
+          className="retro-button retro-button-secondary px-3 py-2 text-xs sm:text-sm"
+          aria-pressed={audioEnabled}>
+          {audioEnabled ? 'Sound On' : 'Sound Off'}
+        </button>
       </header>
 
-      {/* Instructions */}
-      <p className="text-center text-gray-500 text-sm py-2 px-4">
-        Tap a square when you find someone who matches it.
-      </p>
+      <div className="mx-3 mt-3 rounded-xl border-2 border-[#22177f] bg-[#fffde3] px-3 py-2 text-center text-xs font-bold uppercase tracking-[0.08em] text-[#2d2376] sm:mx-4 sm:text-sm">
+        Walk up. Say hi. Find a match. Tap it. Keep momentum.
+      </div>
 
-      {/* Bingo indicator */}
       {hasBingo && (
-        <div className="bg-amber-100 text-amber-800 text-center py-2 font-semibold text-sm">
-          🎉 BINGO! You got a line!
+        <div className="mx-3 mt-3 rounded-xl border-2 border-[#1f1a6d] bg-[#d9fff8] px-3 py-2 text-center text-sm font-black uppercase tracking-[0.08em] text-[#11568a] sm:mx-4">
+          Bingo unlocked. Keep going for extra bragging rights.
         </div>
       )}
 
-      {/* Board */}
-      <div className="flex-1 flex items-center justify-center p-3">
+      <div className="flex flex-1 items-center justify-center p-3 sm:p-5">
         <BingoBoard
           board={board}
           winningSquareIds={winningSquareIds}
           onSquareClick={onSquareClick}
         />
       </div>
+
+      <div className="pb-3 text-center text-[11px] font-bold uppercase tracking-[0.08em] text-[#3d2f8f] sm:pb-4">
+        Collect stories, not just checkmarks.
+      </div>
     </div>
-  );
+  )
 }

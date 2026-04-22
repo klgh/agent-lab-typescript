@@ -1,11 +1,15 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-accent: #2563eb;
-  --color-accent-light: #3b82f6;
-  --color-marked: #dcfce7;
-  --color-marked-border: #22c55e;
-  --color-bingo: #fbbf24;
+  --color-accent: #0b2bff;
+  --color-accent-light: #3b51ff;
+  --color-marked: #d7ffe7;
+  --color-marked-border: #09b34b;
+  --color-bingo: #ffe700;
+  --color-hot-pink: #ff2aa1;
+  --color-cyan-pop: #00e5ff;
+  --color-retro-ink: #1b1540;
+  --color-window: #fefefe;
 }
 
 html,
@@ -16,6 +20,192 @@ body,
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Verdana', sans-serif;
+  color: var(--color-retro-ink);
+  background:
+    radial-gradient(circle at 20% 12%, #fff69f 0%, #fff69f 8%, transparent 8%),
+    radial-gradient(circle at 80% 85%, #ffa4f0 0%, #ffa4f0 7%, transparent 7%),
+    repeating-linear-gradient(45deg, #edf3ff, #edf3ff 18px, #ffd8f3 18px, #ffd8f3 36px, #d8fff9 36px, #d8fff9 54px);
   -webkit-tap-highlight-color: transparent;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.app-shell {
+  min-height: 100%;
+  padding: 0.9rem;
+}
+
+.retro-window {
+  min-height: calc(100% - 0.1rem);
+  border: 4px solid #22177f;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #f9fdff 0%, #eff6ff 100%);
+  box-shadow:
+    0 0 0 4px #ffffff,
+    0 12px 0 #22177f,
+    0 24px 26px rgb(40 12 96 / 30%);
+  overflow: hidden;
+}
+
+.retro-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  color: #ffffff;
+  background: linear-gradient(90deg, #0b2bff 0%, #8638ff 45%, #ff2aa1 100%);
+  border-bottom: 3px solid #1f1a6d;
+}
+
+.retro-dots {
+  display: inline-flex;
+  gap: 0.35rem;
+}
+
+.retro-dots span {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 999px;
+  border: 2px solid #ffffff;
+  background: #ffdb00;
+}
+
+.retro-title {
+  font-family: 'Courier New', 'Lucida Console', monospace;
+  font-size: 0.86rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 #111;
+}
+
+.retro-status {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.retro-marquee {
+  background: #fff7bf;
+  border-bottom: 3px dashed #1f1a6d;
+  color: #201761;
+  font-family: 'Courier New', 'Lucida Console', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  overflow: hidden;
+  padding: 0.35rem 0;
+  white-space: nowrap;
+}
+
+.retro-ticker-track {
+  display: inline-block;
+  min-width: 200%;
+  padding-left: 100%;
+  will-change: transform;
+  animation: ticker-move 18s linear infinite;
+}
+
+.retro-panel {
+  border: 3px solid #1f1a6d;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 4px 0 #1f1a6d;
+}
+
+.retro-sticker {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #ffffff;
+  border: 2px solid #1f1a6d;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ff2aa1 0%, #8638ff 100%);
+  box-shadow: 0 2px 0 #1f1a6d;
+  padding: 0.2rem 0.55rem;
+}
+
+.retro-button {
+  border: 3px solid #1f1a6d;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #fffb9c 0%, #ffe700 100%);
+  color: #201761;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 0 #1f1a6d;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    filter 120ms ease;
+}
+
+.retro-button:hover {
+  filter: saturate(1.15);
+}
+
+.retro-button:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #1f1a6d;
+}
+
+.retro-button-secondary {
+  background: linear-gradient(180deg, #ddf8ff 0%, #a4efff 100%);
+}
+
+.blink {
+  animation: blink 950ms steps(2, end) infinite;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes ticker-move {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes float-in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.float-in {
+  animation: float-in 260ms ease-out both;
+}
+
+.checker-bg {
+  background-image:
+    linear-gradient(45deg, rgb(11 43 255 / 10%) 25%, transparent 25%),
+    linear-gradient(-45deg, rgb(11 43 255 / 10%) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgb(255 42 161 / 10%) 75%),
+    linear-gradient(-45deg, transparent 75%, rgb(255 42 161 / 10%) 75%);
+  background-size: 22px 22px;
+  background-position:
+    0 0,
+    0 11px,
+    11px -11px,
+    -11px 0;
 }

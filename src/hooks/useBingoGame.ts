@@ -1,127 +1,125 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
-import type { BingoSquareData, BingoLine, GameState } from '../types';
-import {
-  generateBoard,
-  toggleSquare,
-  checkBingo,
-  getWinningSquareIds,
-} from '../utils/bingoLogic';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
+import type { BingoSquareData, BingoLine, GameState } from '../types'
+import { generateBoard, toggleSquare, checkBingo, getWinningSquareIds } from '../utils/bingoLogic'
 
 export interface BingoGameState {
-  gameState: GameState;
-  board: BingoSquareData[];
-  winningLine: BingoLine | null;
-  winningSquareIds: Set<number>;
-  showBingoModal: boolean;
+  gameState: GameState
+  board: BingoSquareData[]
+  winningLine: BingoLine | null
+  winningSquareIds: Set<number>
+  showBingoModal: boolean
+  audioEnabled: boolean
 }
 
 export interface BingoGameActions {
-  startGame: () => void;
-  handleSquareClick: (squareId: number) => void;
-  resetGame: () => void;
-  dismissModal: () => void;
+  startGame: () => void
+  handleSquareClick: (squareId: number) => void
+  resetGame: () => void
+  dismissModal: () => void
+  toggleAudio: () => void
 }
 
-const STORAGE_KEY = 'bingo-game-state';
-const STORAGE_VERSION = 1;
+const STORAGE_KEY = 'bingo-game-state'
+const STORAGE_VERSION = 1
+const AUDIO_STORAGE_KEY = 'bingo-audio-enabled'
 
 interface StoredGameData {
-  version: number;
-  gameState: GameState;
-  board: BingoSquareData[];
-  winningLine: BingoLine | null;
+  version: number
+  gameState: GameState
+  board: BingoSquareData[]
+  winningLine: BingoLine | null
 }
 
 function validateStoredData(data: unknown): data is StoredGameData {
   if (!data || typeof data !== 'object') {
-    return false;
+    return false
   }
-  
-  const obj = data as Record<string, unknown>;
-  
+
+  const obj = data as Record<string, unknown>
+
   if (obj.version !== STORAGE_VERSION) {
-    return false;
+    return false
   }
-  
+
   if (typeof obj.gameState !== 'string' || !['start', 'playing', 'bingo'].includes(obj.gameState)) {
-    return false;
+    return false
   }
-  
+
   if (!Array.isArray(obj.board) || (obj.board.length !== 0 && obj.board.length !== 25)) {
-    return false;
+    return false
   }
-  
+
   const validSquares = obj.board.every((sq: unknown) => {
-    if (!sq || typeof sq !== 'object') return false;
-    const square = sq as Record<string, unknown>;
+    if (!sq || typeof sq !== 'object') return false
+    const square = sq as Record<string, unknown>
     return (
       typeof square.id === 'number' &&
       typeof square.text === 'string' &&
       typeof square.isMarked === 'boolean' &&
       typeof square.isFreeSpace === 'boolean'
-    );
-  });
-  
+    )
+  })
+
   if (!validSquares) {
-    return false;
+    return false
   }
-  
+
   if (obj.winningLine !== null) {
     if (typeof obj.winningLine !== 'object') {
-      return false;
+      return false
     }
-    const line = obj.winningLine as Record<string, unknown>;
+    const line = obj.winningLine as Record<string, unknown>
     if (
       typeof line.type !== 'string' ||
       !['row', 'column', 'diagonal'].includes(line.type) ||
       typeof line.index !== 'number' ||
       !Array.isArray(line.squares)
     ) {
-      return false;
+      return false
     }
   }
-  
-  return true;
+
+  return true
 }
 
 function loadGameState(): Pick<BingoGameState, 'gameState' | 'board' | 'winningLine'> | null {
   // SSR guard
   if (typeof window === 'undefined') {
-    return null;
+    return null
   }
 
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = localStorage.getItem(STORAGE_KEY)
     if (!saved) {
-      return null;
+      return null
     }
 
-    const parsed = JSON.parse(saved);
-    
+    const parsed = JSON.parse(saved)
+
     if (validateStoredData(parsed)) {
       return {
         gameState: parsed.gameState,
         board: parsed.board,
         winningLine: parsed.winningLine,
-      };
+      }
     } else {
-      console.warn('Invalid game state data in localStorage, clearing...');
-      localStorage.removeItem(STORAGE_KEY);
+      console.warn('Invalid game state data in localStorage, clearing...')
+      localStorage.removeItem(STORAGE_KEY)
     }
   } catch (error) {
-    console.warn('Failed to load game state:', error);
+    console.warn('Failed to load game state:', error)
     if (typeof window !== 'undefined') {
-      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(STORAGE_KEY)
     }
   }
 
-  return null;
+  return null
 }
 
 function saveGameState(gameState: GameState, board: BingoSquareData[], winningLine: BingoLine | null): void {
   // SSR guard
   if (typeof window === 'undefined') {
-    return;
+    return
   }
 
   try {
@@ -130,72 +128,145 @@ function saveGameState(gameState: GameState, board: BingoSquareData[], winningLi
       gameState,
       board,
       winningLine,
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
   } catch (error) {
-    console.warn('Failed to save game state:', error);
+    console.warn('Failed to save game state:', error)
+  }
+}
+
+function loadAudioEnabled(): boolean {
+  if (typeof window === 'undefined') {
+    return true
+  }
+
+  try {
+    const saved = localStorage.getItem(AUDIO_STORAGE_KEY)
+    if (saved === null) {
+      return true
+    }
+    return saved === 'true'
+  } catch {
+    return true
   }
 }
 
 export function useBingoGame(): BingoGameState & BingoGameActions {
-  const loadedState = useMemo(() => loadGameState(), []);
+  const loadedState = useMemo(() => loadGameState(), [])
+  const audioContextRef = useRef<AudioContext | null>(null)
 
-  const [gameState, setGameState] = useState<GameState>(
-    () => loadedState?.gameState || 'start'
-  );
-  const [board, setBoard] = useState<BingoSquareData[]>(
-    () => loadedState?.board || []
-  );
-  const [winningLine, setWinningLine] = useState<BingoLine | null>(
-    () => loadedState?.winningLine || null
-  );
-  const [showBingoModal, setShowBingoModal] = useState(false);
+  const [gameState, setGameState] = useState<GameState>(() => loadedState?.gameState || 'start')
+  const [board, setBoard] = useState<BingoSquareData[]>(() => loadedState?.board || [])
+  const [winningLine, setWinningLine] = useState<BingoLine | null>(() => loadedState?.winningLine || null)
+  const [showBingoModal, setShowBingoModal] = useState(false)
+  const [audioEnabled, setAudioEnabled] = useState<boolean>(() => loadAudioEnabled())
 
-  const winningSquareIds = useMemo(
-    () => getWinningSquareIds(winningLine),
-    [winningLine]
-  );
+  const winningSquareIds = useMemo(() => getWinningSquareIds(winningLine), [winningLine])
 
   // Save game state to localStorage whenever it changes
   useEffect(() => {
-    saveGameState(gameState, board, winningLine);
-  }, [gameState, board, winningLine]);
+    saveGameState(gameState, board, winningLine)
+  }, [gameState, board, winningLine])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(AUDIO_STORAGE_KEY, String(audioEnabled))
+    }
+  }, [audioEnabled])
+
+  const playTone = useCallback(
+    (frequency: number, durationMs: number, type: OscillatorType = 'square') => {
+      if (!audioEnabled || typeof window === 'undefined') {
+        return
+      }
+
+      const AudioContextClass =
+        window.AudioContext ||
+        (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+      if (!AudioContextClass) {
+        return
+      }
+
+      try {
+        if (!audioContextRef.current) {
+          audioContextRef.current = new AudioContextClass()
+        }
+
+        const context = audioContextRef.current
+        const oscillator = context.createOscillator()
+        const gainNode = context.createGain()
+        const now = context.currentTime
+
+        oscillator.type = type
+        oscillator.frequency.setValueAtTime(frequency, now)
+        gainNode.gain.setValueAtTime(0.0001, now)
+        gainNode.gain.exponentialRampToValueAtTime(0.13, now + 0.012)
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, now + durationMs / 1000)
+
+        oscillator.connect(gainNode)
+        gainNode.connect(context.destination)
+        oscillator.start(now)
+        oscillator.stop(now + durationMs / 1000)
+      } catch {
+        // Ignore audio playback errors for browsers that block or fail sound APIs.
+      }
+    },
+    [audioEnabled]
+  )
+
+  const playTapSound = useCallback(() => {
+    playTone(680, 90, 'square')
+  }, [playTone])
+
+  const playWinSound = useCallback(() => {
+    playTone(740, 120, 'triangle')
+    setTimeout(() => playTone(1040, 190, 'triangle'), 110)
+  }, [playTone])
 
   const startGame = useCallback(() => {
-    setBoard(generateBoard());
-    setWinningLine(null);
-    setGameState('playing');
-  }, []);
+    setBoard(generateBoard())
+    setWinningLine(null)
+    setGameState('playing')
+  }, [])
 
-  const handleSquareClick = useCallback((squareId: number) => {
-    setBoard((currentBoard) => {
-      const newBoard = toggleSquare(currentBoard, squareId);
-      
-      // Check for bingo after toggling
-      const bingo = checkBingo(newBoard);
-      if (bingo && !winningLine) {
-        // Schedule state updates to avoid synchronous setState in effect
-        queueMicrotask(() => {
-          setWinningLine(bingo);
-          setGameState('bingo');
-          setShowBingoModal(true);
-        });
-      }
-      
-      return newBoard;
-    });
-  }, [winningLine]);
+  const handleSquareClick = useCallback(
+    (squareId: number) => {
+      setBoard((currentBoard) => {
+        const newBoard = toggleSquare(currentBoard, squareId)
+        playTapSound()
+
+        // Check for bingo after toggling
+        const bingo = checkBingo(newBoard)
+        if (bingo && !winningLine) {
+          // Schedule state updates to avoid synchronous setState in effect
+          queueMicrotask(() => {
+            setWinningLine(bingo)
+            setGameState('bingo')
+            setShowBingoModal(true)
+            playWinSound()
+          })
+        }
+
+        return newBoard
+      })
+    },
+    [playTapSound, playWinSound, winningLine]
+  )
 
   const resetGame = useCallback(() => {
-    setGameState('start');
-    setBoard([]);
-    setWinningLine(null);
-    setShowBingoModal(false);
-  }, []);
+    setGameState('start')
+    setBoard([])
+    setWinningLine(null)
+    setShowBingoModal(false)
+  }, [])
 
   const dismissModal = useCallback(() => {
-    setShowBingoModal(false);
-  }, []);
+    setShowBingoModal(false)
+  }, [])
+
+  const toggleAudio = useCallback(() => {
+    setAudioEnabled((current) => !current)
+  }, [])
 
   return {
     gameState,
@@ -203,9 +274,11 @@ export function useBingoGame(): BingoGameState & BingoGameActions {
     winningLine,
     winningSquareIds,
     showBingoModal,
+    audioEnabled,
     startGame,
     handleSquareClick,
     resetGame,
     dismissModal,
-  };
+    toggleAudio,
+  }
 }
