@@ -16,11 +16,9 @@
     "repos,issues,pull_requests,code_search,copilot,web_search"
   ],
   "workbench.browser.enableChatTools": true,
-  "github.copilot.chat.agentDebugLog.enabled": true,
   "github.copilot.chat.agentDebugLog.fileLogging.enabled": true,
   "imageCarousel.explorerContextMenu.enabled": true,
   "imageCarousel.chat.enabled": true,
-  "chat.customizationsMenu.enabled": true,
   "chat.useCustomizationsInParentRepositories": true,
   "chat.useCustomAgentHooks": true
 }
