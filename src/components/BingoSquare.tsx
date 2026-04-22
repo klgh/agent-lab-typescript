@@ -10,6 +10,8 @@ export function BingoSquare({ square, isWinning, onClick }: BingoSquareProps) {
   const baseClasses =
     'relative flex min-h-[60px] items-center justify-center rounded-lg border-2 border-[#22177f] px-1 py-2 text-center text-[10px] font-bold leading-tight text-[#2c2278] shadow-[0_2px_0_#1f1a6d] transition-all duration-150 select-none sm:min-h-[66px] sm:text-[11px]'
 
+  const interactionClasses = `${square.isMarked ? 'tile-locked' : 'tile-hover'} ${isWinning ? 'win-pulse' : ''}`
+
   const stateClasses =
     square.isMarked ?
       isWinning ? 'bg-[linear-gradient(145deg,#fff9a5_0%,#ffe700_100%)] text-[#5a4300] scale-[1.02]'
@@ -25,7 +27,7 @@ export function BingoSquare({ square, isWinning, onClick }: BingoSquareProps) {
     <button
       onClick={onClick}
       disabled={square.isFreeSpace}
-      className={`${baseClasses} ${stateClasses} ${freeSpaceClasses}`}
+      className={`${baseClasses} ${stateClasses} ${freeSpaceClasses} ${interactionClasses}`}
       aria-pressed={square.isMarked}
       aria-label={square.isFreeSpace ? 'Free space' : square.text}>
       <span className="wrap-break-word px-0.5">{square.text}</span>

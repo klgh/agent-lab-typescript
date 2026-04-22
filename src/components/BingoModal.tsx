@@ -5,7 +5,27 @@ interface BingoModalProps {
 export function BingoModal({ onDismiss }: BingoModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1f1659]/65 p-4 backdrop-blur-[2px]">
-      <div className="retro-panel float-in w-full max-w-sm border-4 bg-[#fff7cc] p-6 text-center">
+      <div className="retro-panel modal-pop relative w-full max-w-sm border-4 bg-[#fff7cc] p-6 text-center">
+        <span
+          className="confetti-spark"
+          aria-hidden
+        />
+        <span
+          className="confetti-spark"
+          aria-hidden
+        />
+        <span
+          className="confetti-spark"
+          aria-hidden
+        />
+        <span
+          className="confetti-spark"
+          aria-hidden
+        />
+        <span
+          className="confetti-spark"
+          aria-hidden
+        />
         <div className="mx-auto mb-3 inline-flex rounded-full border-2 border-[#1f1a6d] bg-[#ffffff] px-3 py-1 text-xs font-black uppercase tracking-[0.08em] text-[#2f237e]">
           Achievement Unlocked
         </div>
