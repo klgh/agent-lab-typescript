@@ -1,9 +1,9 @@
-import type { GameMode } from '../types';
+import type { GameMode } from '../types'
 
 interface StartScreenProps {
-  onStart: (mode: GameMode) => void;
-  audioEnabled: boolean;
-  onToggleAudio: () => void;
+  onStart: (mode: GameMode) => void
+  audioEnabled: boolean
+  onToggleAudio: () => void
 }
 
 export function StartScreen({ onStart, audioEnabled, onToggleAudio }: StartScreenProps) {
@@ -39,16 +39,22 @@ export function StartScreen({ onStart, audioEnabled, onToggleAudio }: StartScree
           </div>
 
           <div className="mt-6 space-y-3">
-            <button
-              onClick={() => onStart('bingo')}
-              className="retro-button w-full px-6 py-4 text-lg float-in stagger-2">
-              🎰 Bingo Mode
-            </button>
-            <button
-              onClick={() => onStart('deck')}
-              className="retro-button w-full px-6 py-4 text-lg float-in stagger-3 bg-[#ffb3ba]">
-              🎴 Card Shuffle
-            </button>
+            <div>
+              <button
+                onClick={() => onStart('bingo')}
+                className="retro-button w-full px-6 py-4 text-lg float-in stagger-2">
+                🎰 Bingo Mode
+              </button>
+              <p className="mt-1 text-xs text-[#3a2388]">Best for: Groups • ~15 min • 4+ people</p>
+            </div>
+            <div>
+              <button
+                onClick={() => onStart('deck')}
+                className="retro-button w-full px-6 py-4 text-lg float-in stagger-3 bg-[#ffb3ba]">
+                🎴 Card Shuffle
+              </button>
+              <p className="mt-1 text-xs text-[#3a2388]">Best for: Solo prep • ~5 min • 1-2 people</p>
+            </div>
           </div>
 
           <div className="mt-4 flex gap-3 sm:justify-center">
@@ -66,5 +72,5 @@ export function StartScreen({ onStart, audioEnabled, onToggleAudio }: StartScree
         </div>
       </div>
     </div>
-  );
+  )
 }

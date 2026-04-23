@@ -29,7 +29,8 @@ export function CardDeck({ onBack }: CardDeckProps) {
         <div className="retro-panel bg-[#fff3cf] p-4 mb-6 float-in stagger-1">
           <h2 className="text-xs uppercase font-bold tracking-[0.08em] text-[#6b2d92] mb-2">How to play</h2>
           <p className="text-xs text-[#3a2388] leading-relaxed">
-            Tap or swipe <strong>LEFT</strong> if you didn't find someone matching this. <strong>RIGHT</strong> if you did!
+            <span className="hidden sm:inline">Tap <strong>LEFT</strong> if you didn't find someone matching this. <strong>RIGHT</strong> if you did! </span>
+            <span className="sm:hidden">Swipe <strong>LEFT</strong> if you didn't find someone matching this. <strong>RIGHT</strong> if you did! </span>
             Each button gives you the next card.
           </p>
         </div>
