@@ -1,7 +1,9 @@
+import type { GameMode } from '../types';
+
 interface StartScreenProps {
-  onStart: () => void
-  audioEnabled: boolean
-  onToggleAudio: () => void
+  onStart: (mode: GameMode) => void;
+  audioEnabled: boolean;
+  onToggleAudio: () => void;
 }
 
 export function StartScreen({ onStart, audioEnabled, onToggleAudio }: StartScreenProps) {
@@ -36,15 +38,23 @@ export function StartScreen({ onStart, audioEnabled, onToggleAudio }: StartScree
             </div>
           </div>
 
-          <div className="mt-6 grid gap-3 sm:grid-cols-[1fr_auto]">
+          <div className="mt-6 space-y-3">
             <button
-              onClick={onStart}
+              onClick={() => onStart('bingo')}
               className="retro-button w-full px-6 py-4 text-lg float-in stagger-2">
-              Start The Party
+              🎰 Bingo Mode
             </button>
             <button
+              onClick={() => onStart('deck')}
+              className="retro-button w-full px-6 py-4 text-lg float-in stagger-3 bg-[#ffb3ba]">
+              🎴 Card Shuffle
+            </button>
+          </div>
+
+          <div className="mt-4 flex gap-3 sm:justify-center">
+            <button
               onClick={onToggleAudio}
-              className="retro-button retro-button-secondary w-full px-4 py-4 text-sm float-in stagger-3 sm:w-auto"
+              className="retro-button retro-button-secondary px-4 py-2 text-sm float-in stagger-4"
               aria-pressed={audioEnabled}>
               {audioEnabled ? 'Audio On' : 'Audio Off'}
             </button>
@@ -56,5 +66,5 @@ export function StartScreen({ onStart, audioEnabled, onToggleAudio }: StartScree
         </div>
       </div>
     </div>
-  )
+  );
 }

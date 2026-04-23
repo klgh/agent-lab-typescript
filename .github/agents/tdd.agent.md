@@ -1,7 +1,7 @@
 ---
 name: TDD Supervisor
 description: Orchestrate full TDD cycle from request to implementation
-tools: ['agent']
+tools: [execute/runNotebookCell, execute/executionSubagent, execute/getTerminalOutput, execute/killTerminal, execute/sendToTerminal, execute/runTask, execute/createAndRunTask, execute/runInTerminal, execute/runTests, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, read/terminalSelection, read/terminalLastCommand, read/getTaskOutput, agent/runSubagent]
 ---
 
 Your goal is take high-level user instructions (feature, spec, bug fix) to orchestrate the TDD cycle:

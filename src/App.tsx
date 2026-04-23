@@ -2,6 +2,7 @@ import { useBingoGame } from './hooks/useBingoGame'
 import { StartScreen } from './components/StartScreen'
 import { GameScreen } from './components/GameScreen'
 import { BingoModal } from './components/BingoModal'
+import { CardDeck } from './components/CardDeck'
 
 function App() {
   const {
@@ -46,6 +47,8 @@ function App() {
             audioEnabled={audioEnabled}
             onToggleAudio={toggleAudio}
           />
+        : gameState === 'deck' ?
+          <CardDeck onBack={resetGame} />
         : <>
             <GameScreen
               board={board}

@@ -1,9 +1,10 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
-import type { BingoSquareData, BingoLine, GameState } from '../types'
+import type { BingoSquareData, BingoLine, GameState, GameMode } from '../types'
 import { generateBoard, toggleSquare, checkBingo, getWinningSquareIds } from '../utils/bingoLogic'
 
 export interface BingoGameState {
   gameState: GameState
+  selectedMode: GameMode | null
   board: BingoSquareData[]
   winningLine: BingoLine | null
   winningSquareIds: Set<number>
@@ -12,7 +13,7 @@ export interface BingoGameState {
 }
 
 export interface BingoGameActions {
-  startGame: () => void
+  startGame: (mode: GameMode) => void
   handleSquareClick: (squareId: number) => void
   resetGame: () => void
   dismissModal: () => void
@@ -41,7 +42,7 @@ function validateStoredData(data: unknown): data is StoredGameData {
     return false
   }
 
-  if (typeof obj.gameState !== 'string' || !['start', 'playing', 'bingo'].includes(obj.gameState)) {
+  if (typeof obj.gameState !== 'string' || !['start', 'mode-select', 'playing', 'bingo', 'deck'].includes(obj.gameState)) {
     return false
   }
 
@@ -156,6 +157,7 @@ export function useBingoGame(): BingoGameState & BingoGameActions {
   const audioContextRef = useRef<AudioContext | null>(null)
 
   const [gameState, setGameState] = useState<GameState>(() => loadedState?.gameState || 'start')
+  const [selectedMode, setSelectedMode] = useState<GameMode | null>(null)
   const [board, setBoard] = useState<BingoSquareData[]>(() => loadedState?.board || [])
   const [winningLine, setWinningLine] = useState<BingoLine | null>(() => loadedState?.winningLine || null)
   const [showBingoModal, setShowBingoModal] = useState(false)
@@ -223,10 +225,15 @@ export function useBingoGame(): BingoGameState & BingoGameActions {
     setTimeout(() => playTone(1040, 190, 'triangle'), 110)
   }, [playTone])
 
-  const startGame = useCallback(() => {
-    setBoard(generateBoard())
-    setWinningLine(null)
-    setGameState('playing')
+  const startGame = useCallback((mode: GameMode) => {
+    setSelectedMode(mode)
+    if (mode === 'bingo') {
+      setBoard(generateBoard())
+      setWinningLine(null)
+      setGameState('playing')
+    } else if (mode === 'deck') {
+      setGameState('deck')
+    }
   }, [])
 
   const handleSquareClick = useCallback(
@@ -270,6 +277,7 @@ export function useBingoGame(): BingoGameState & BingoGameActions {
 
   return {
     gameState,
+    selectedMode,
     board,
     winningLine,
     winningSquareIds,
