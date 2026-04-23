@@ -14,6 +14,8 @@ Bingo Mixer is a React + TypeScript social bingo app for in-person mixers.
 
 Do not finalize code changes until all three are checked.
 
+**Agent Hook:** Tests automatically run when the agent finishes. If tests fail, the agent is blocked from completing — you must fix the failing tests before the session ends.
+
 ## Quick Start
 
 - Dev server: `npm run dev`

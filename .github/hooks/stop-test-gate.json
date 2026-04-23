@@ -1,0 +1,11 @@
+{
+    "hooks": {
+        "Stop": [
+            {
+                "type": "command",
+                "command": ".github/hooks/validate-tests.sh",
+                "timeout": 60
+            }
+        ]
+    }
+}
