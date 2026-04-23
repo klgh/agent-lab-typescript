@@ -21,5 +21,9 @@
   "imageCarousel.chat.enabled": true,
   "chat.useCustomizationsInParentRepositories": true,
   "chat.useCustomAgentHooks": true,
-  "wallaby.compactStatus": true
+  "wallaby.compactStatus": true,
+  "markdownlint.config": {
+    "default": true,
+    "MD041": true,
+  }
 }

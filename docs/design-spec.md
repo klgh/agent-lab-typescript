@@ -119,7 +119,6 @@
 - Mode selection passed to game state machine
 - Separate routing in App.tsx based on selected mode
 
-
 ## Build Status
 
 ✅ All phases complete
@@ -130,12 +129,14 @@
 ### Feature Summary
 
 **Left/Right Scoring System**:
+
 - "Nope" button (left, red) - increments "Not Found" counter
 - "Found" button (right, green) - increments "Found" counter
 - Buttons auto-advance to next random card after each action
 - Score display shows both counters with visual emphasis
 
 **User Instructions**:
+
 - Clear instructions panel at top of Card Deck screen
 - Explains left/right button behavior in simple language
 - Matches retro aesthetic with styled panel and bold text
