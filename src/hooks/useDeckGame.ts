@@ -5,6 +5,8 @@ export interface DeckGameState {
   currentQuestion: string;
   usedIndices: Set<number>;
   shuffleCount: number;
+  successCount: number;
+  failCount: number;
 }
 
 export function useDeckGame() {
@@ -12,6 +14,8 @@ export function useDeckGame() {
     currentQuestion: getRandomQuestion(new Set()),
     usedIndices: new Set(),
     shuffleCount: 0,
+    successCount: 0,
+    failCount: 0,
   });
 
   const shuffle = useCallback(() => {
@@ -23,6 +27,38 @@ export function useDeckGame() {
         currentQuestion: nextQuestion,
         usedIndices: newIndices,
         shuffleCount: prev.shuffleCount + 1,
+        successCount: prev.successCount,
+        failCount: prev.failCount,
+      };
+    });
+  }, []);
+
+  const recordSuccess = useCallback(() => {
+    setState((prev) => {
+      const newIndices = new Set(prev.usedIndices);
+      const nextQuestion = getRandomQuestion(newIndices);
+
+      return {
+        currentQuestion: nextQuestion,
+        usedIndices: newIndices,
+        shuffleCount: prev.shuffleCount + 1,
+        successCount: prev.successCount + 1,
+        failCount: prev.failCount,
+      };
+    });
+  }, []);
+
+  const recordFail = useCallback(() => {
+    setState((prev) => {
+      const newIndices = new Set(prev.usedIndices);
+      const nextQuestion = getRandomQuestion(newIndices);
+
+      return {
+        currentQuestion: nextQuestion,
+        usedIndices: newIndices,
+        shuffleCount: prev.shuffleCount + 1,
+        successCount: prev.successCount,
+        failCount: prev.failCount + 1,
       };
     });
   }, []);
@@ -32,10 +68,20 @@ export function useDeckGame() {
       currentQuestion: getRandomQuestion(new Set()),
       usedIndices: new Set(),
       shuffleCount: 0,
+      successCount: 0,
+      failCount: 0,
     });
   }, []);
 
-  return { currentQuestion: state.currentQuestion, shuffle, reset };
+  return {
+    currentQuestion: state.currentQuestion,
+    successCount: state.successCount,
+    failCount: state.failCount,
+    shuffle,
+    recordSuccess,
+    recordFail,
+    reset
+  };
 }
 
 function getRandomQuestion(usedIndices: Set<number>): string {

@@ -13,9 +13,10 @@
 
 - **Entry**: Players see mode selection on Start Screen
 - **Gameplay**: Tap to reveal random card with a question
-- **Interaction**: Single tap reveals card, tap again to shuffle to next
+- **Interaction**: Left button (Nope) for "not found", Right button (Found) for "found a match"
+- **Scoring**: Tracks successes vs. failures with live counter display
 - **No Win Condition**: Infinite deck for continuous conversation
-- **Visual**: Large card UI, one question at a time, shuffle animation
+- **Visual**: Large card UI, one question at a time, score display, color-coded buttons
 
 ---
 
@@ -77,6 +78,9 @@
 - Using existing questions.ts for consistency
 - Single card at a time (vs. deck fan-out) for clarity
 - Infinite shuffle loop (no win state) matches "party mixer" vibe
+- Left/Right buttons track success/fail with live counters
+- Instructions visible on card screen for quick learning
+- Color-coded buttons: red (fail/nope) and green (success/found) for instant visual feedback
 
 ---
 
@@ -92,16 +96,21 @@
 **CardDeck Component** (`src/components/CardDeck.tsx`):
 
 - Large centered card with question text
-- Tap/click to shuffle to next random question
-- Yellow/cream gradient background (#fffacd → #fff8dc)
-- Card icon emoji (🎴) for visual interest
-- Pulsing "tap to shuffle" indicator
-- Back button for returning to mode selection
+- Tap center to shuffle (see another random card)
+- Left button (red) "Nope" = didn't find a match, advance to next card
+- Right button (green) "Found" = found someone matching, advance to next card
+- Score display: "Not Found" counter (red) and "Found" counter (green)
+- Clear instructions panel at top showing how to play
+- Full-height layout with buttons at bottom
+- Gradient card background and color-coded button feedback
 
 **useDeckGame Hook** (`src/hooks/useDeckGame.ts`):
 
 - Manages deck state: current question, used indices, shuffle count
-- Tracks used questions to avoid repeats (until all exhausted)
+- Tracks success/fail counters for live score display
+- recordSuccess() = advance card + increment found count
+- recordFail() = advance card + increment not found count
+- shuffle() = advance card without changing counters
 - Auto-resets used set when all questions shown once
 
 **Mode Selection** (Updated `StartScreen.tsx`):
@@ -110,3 +119,23 @@
 - Mode selection passed to game state machine
 - Separate routing in App.tsx based on selected mode
 
+
+## Build Status
+
+✅ All phases complete
+✅ Build passing (npm run build)
+✅ Lint passing (npm run lint)
+✅ Ready for user testing
+
+### Feature Summary
+
+**Left/Right Scoring System**:
+- "Nope" button (left, red) - increments "Not Found" counter
+- "Found" button (right, green) - increments "Found" counter
+- Buttons auto-advance to next random card after each action
+- Score display shows both counters with visual emphasis
+
+**User Instructions**:
+- Clear instructions panel at top of Card Deck screen
+- Explains left/right button behavior in simple language
+- Matches retro aesthetic with styled panel and bold text

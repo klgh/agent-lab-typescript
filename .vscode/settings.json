@@ -20,5 +20,6 @@
   "imageCarousel.explorerContextMenu.enabled": true,
   "imageCarousel.chat.enabled": true,
   "chat.useCustomizationsInParentRepositories": true,
-  "chat.useCustomAgentHooks": true
+  "chat.useCustomAgentHooks": true,
+  "wallaby.compactStatus": true
 }
