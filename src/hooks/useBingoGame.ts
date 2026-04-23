@@ -1,10 +1,13 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import type { BingoSquareData, BingoLine, GameState, GameMode } from '../types'
+import type { QuestionSetId } from '../types'
+import { DEFAULT_QUESTION_SET_ID, getQuestionsForSet } from '../data/questions'
 import { generateBoard, toggleSquare, checkBingo, getWinningSquareIds } from '../utils/bingoLogic'
 
 export interface BingoGameState {
   gameState: GameState
   selectedMode: GameMode | null
+  selectedQuestionSet: QuestionSetId
   board: BingoSquareData[]
   winningLine: BingoLine | null
   winningSquareIds: Set<number>
@@ -13,7 +16,8 @@ export interface BingoGameState {
 }
 
 export interface BingoGameActions {
-  startGame: (mode: GameMode) => void
+  startGame: (mode: GameMode, questionSetId: QuestionSetId) => void
+  setQuestionSet: (questionSetId: QuestionSetId) => void
   handleSquareClick: (squareId: number) => void
   resetGame: () => void
   dismissModal: () => void
@@ -42,7 +46,10 @@ function validateStoredData(data: unknown): data is StoredGameData {
     return false
   }
 
-  if (typeof obj.gameState !== 'string' || !['start', 'mode-select', 'playing', 'bingo', 'deck'].includes(obj.gameState)) {
+  if (
+    typeof obj.gameState !== 'string' ||
+    !['start', 'mode-select', 'playing', 'bingo', 'deck'].includes(obj.gameState)
+  ) {
     return false
   }
 
@@ -158,6 +165,7 @@ export function useBingoGame(): BingoGameState & BingoGameActions {
 
   const [gameState, setGameState] = useState<GameState>(() => loadedState?.gameState || 'start')
   const [selectedMode, setSelectedMode] = useState<GameMode | null>(null)
+  const [selectedQuestionSet, setSelectedQuestionSet] = useState<QuestionSetId>(DEFAULT_QUESTION_SET_ID)
   const [board, setBoard] = useState<BingoSquareData[]>(() => loadedState?.board || [])
   const [winningLine, setWinningLine] = useState<BingoLine | null>(() => loadedState?.winningLine || null)
   const [showBingoModal, setShowBingoModal] = useState(false)
@@ -225,15 +233,20 @@ export function useBingoGame(): BingoGameState & BingoGameActions {
     setTimeout(() => playTone(1040, 190, 'triangle'), 110)
   }, [playTone])
 
-  const startGame = useCallback((mode: GameMode) => {
+  const startGame = useCallback((mode: GameMode, questionSetId: QuestionSetId) => {
     setSelectedMode(mode)
+    setSelectedQuestionSet(questionSetId)
     if (mode === 'bingo') {
-      setBoard(generateBoard())
+      setBoard(generateBoard(getQuestionsForSet(questionSetId)))
       setWinningLine(null)
       setGameState('playing')
     } else if (mode === 'deck') {
       setGameState('deck')
     }
+  }, [])
+
+  const setQuestionSet = useCallback((questionSetId: QuestionSetId) => {
+    setSelectedQuestionSet(questionSetId)
   }, [])
 
   const handleSquareClick = useCallback(
@@ -278,12 +291,14 @@ export function useBingoGame(): BingoGameState & BingoGameActions {
   return {
     gameState,
     selectedMode,
+    selectedQuestionSet,
     board,
     winningLine,
     winningSquareIds,
     showBingoModal,
     audioEnabled,
     startGame,
+    setQuestionSet,
     handleSquareClick,
     resetGame,
     dismissModal,

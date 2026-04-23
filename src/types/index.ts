@@ -1,17 +1,20 @@
 /** Domain types for the Bingo game */
 
+import type { QuestionSetId } from '../data/questions'
+
 export interface BingoSquareData {
-  id: number;
-  text: string;
-  isMarked: boolean;
-  isFreeSpace: boolean;
+  id: number
+  text: string
+  isMarked: boolean
+  isFreeSpace: boolean
 }
 
 export interface BingoLine {
-  type: 'row' | 'column' | 'diagonal' | 'corners';
-  index: number;
-  squares: number[];
+  type: 'row' | 'column' | 'diagonal' | 'corners'
+  index: number
+  squares: number[]
 }
 
-export type GameMode = 'bingo' | 'deck';
-export type GameState = 'start' | 'mode-select' | 'playing' | 'bingo' | 'deck';
+export type GameMode = 'bingo' | 'deck'
+export type GameState = 'start' | 'mode-select' | 'playing' | 'bingo' | 'deck'
+export type { QuestionSetId }

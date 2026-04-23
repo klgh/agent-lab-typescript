@@ -1,13 +1,19 @@
 import { useDeckGame } from '../hooks/useDeckGame';
+import { getQuestionsForSet, questionSets } from '../data/questions';
 import { useState } from 'react';
+import type { QuestionSetId } from '../types';
 
 interface CardDeckProps {
   onBack: () => void;
+  questionSetId: QuestionSetId;
 }
 
-export function CardDeck({ onBack }: CardDeckProps) {
-  const { currentQuestion, successCount, failCount, shuffle, recordSuccess, recordFail } = useDeckGame();
+export function CardDeck({ onBack, questionSetId }: CardDeckProps) {
+  const { currentQuestion, successCount, failCount, shuffle, recordSuccess, recordFail } = useDeckGame(
+    getQuestionsForSet(questionSetId)
+  );
   const [isAnimating, setIsAnimating] = useState(false);
+  const activeQuestionSet = questionSets[questionSetId];
 
   const handleAction = (callback: () => void) => {
     setIsAnimating(true);
@@ -27,12 +33,16 @@ export function CardDeck({ onBack }: CardDeckProps) {
 
         {/* Instructions */}
         <div className="retro-panel bg-[#fff3cf] p-4 mb-6 float-in stagger-1">
-          <h2 className="text-xs uppercase font-bold tracking-[0.08em] text-[#6b2d92] mb-2">How to play</h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-xs uppercase font-bold tracking-[0.08em] text-[#6b2d92] mb-2">How to play</h2>
+            <span className="retro-sticker mb-2">{activeQuestionSet.label}</span>
+          </div>
           <p className="text-xs text-[#3a2388] leading-relaxed">
             <span className="hidden sm:inline">Tap <strong>LEFT</strong> if you didn't find someone matching this. <strong>RIGHT</strong> if you did! </span>
             <span className="sm:hidden">Swipe <strong>LEFT</strong> if you didn't find someone matching this. <strong>RIGHT</strong> if you did! </span>
             Each button gives you the next card.
           </p>
+          <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#155a8e]">{activeQuestionSet.description}</p>
         </div>
       </div>
 

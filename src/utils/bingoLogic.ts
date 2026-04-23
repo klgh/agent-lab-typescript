@@ -30,8 +30,8 @@ function shuffleArray<T>(array: T[]): T[] {
 /**
  * Generate a new 5x5 bingo board
  */
-export function generateBoard(): BingoSquareData[] {
-  const shuffledQuestions = shuffleArray(questions).slice(0, 24)
+export function generateBoard(questionPool: string[] = questions): BingoSquareData[] {
+  const shuffledQuestions = shuffleArray(questionPool).slice(0, 24)
   const board: BingoSquareData[] = []
 
   let questionIndex = 0

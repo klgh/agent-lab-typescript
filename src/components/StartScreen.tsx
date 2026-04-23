@@ -1,12 +1,21 @@
-import type { GameMode } from '../types'
+import { questionSetOptions } from '../data/questions'
+import type { GameMode, QuestionSetId } from '../types'
 
 interface StartScreenProps {
-  onStart: (mode: GameMode) => void
+  onStart: (mode: GameMode, questionSetId: QuestionSetId) => void
+  selectedQuestionSet: QuestionSetId
+  onQuestionSetChange: (questionSetId: QuestionSetId) => void
   audioEnabled: boolean
   onToggleAudio: () => void
 }
 
-export function StartScreen({ onStart, audioEnabled, onToggleAudio }: StartScreenProps) {
+export function StartScreen({
+  onStart,
+  selectedQuestionSet,
+  onQuestionSetChange,
+  audioEnabled,
+  onToggleAudio,
+}: StartScreenProps) {
   return (
     <div className="checker-bg min-h-full p-5 sm:p-8">
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-4 text-center float-in">
@@ -38,22 +47,61 @@ export function StartScreen({ onStart, audioEnabled, onToggleAudio }: StartScree
             </div>
           </div>
 
-          <div className="mt-6 space-y-3">
-            <div>
-              <button
-                onClick={() => onStart('bingo')}
-                className="retro-button w-full px-6 py-4 text-lg float-in stagger-2">
-                🎰 Bingo Mode
-              </button>
-              <p className="mt-1 text-xs text-[#3a2388]">Best for: Groups • ~15 min • 4+ people</p>
+          <div className="mt-6">
+            <div className="retro-panel retro-panel-lift bg-[#ffe2ff] p-3 text-left shadow-none float-in stagger-2">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-xs uppercase tracking-[0.08em] text-[#6b2d92]">Pick your question set</h2>
+                  <p className="mt-1 text-xs font-semibold text-[#3a2388]">Swap the board vibe before you start.</p>
+                </div>
+                <span className="retro-sticker shrink-0">2 packs</span>
+              </div>
+
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                {questionSetOptions.map((questionSet, index) => {
+                  const isSelected = questionSet.id === selectedQuestionSet
+
+                  return (
+                    <button
+                      key={questionSet.id}
+                      type="button"
+                      onClick={() => onQuestionSetChange(questionSet.id)}
+                      className={`retro-panel text-left transition-transform hover:-translate-y-0.5 ${
+                        isSelected ? 'bg-[#fff3cf] ring-2 ring-[#ff5d8f]' : 'bg-white/80'
+                      } float-in ${index === 0 ? 'stagger-3' : 'stagger-4'}`}
+                      aria-pressed={isSelected}>
+                      <div className="flex items-center justify-between gap-2">
+                        <strong className="text-sm uppercase tracking-[0.08em] text-retro-ink">
+                          {questionSet.label}
+                        </strong>
+                        <span className="text-xs font-black uppercase text-[#6b2d92]">
+                          {isSelected ? 'Selected' : 'Pick me'}
+                        </span>
+                      </div>
+                      <p className="mt-2 text-xs font-semibold text-[#3a2388]">{questionSet.description}</p>
+                    </button>
+                  )
+                })}
+              </div>
             </div>
-            <div>
-              <button
-                onClick={() => onStart('deck')}
-                className="retro-button w-full px-6 py-4 text-lg float-in stagger-3 bg-[#ffb3ba]">
-                🎴 Card Shuffle
-              </button>
-              <p className="mt-1 text-xs text-[#3a2388]">Best for: Solo prep • ~5 min • 1-2 people</p>
+
+            <div className="mt-4 space-y-3">
+              <div>
+                <button
+                  onClick={() => onStart('bingo', selectedQuestionSet)}
+                  className="retro-button w-full px-6 py-4 text-lg float-in stagger-2">
+                  🎰 Bingo Mode
+                </button>
+                <p className="mt-1 text-xs text-[#3a2388]">Best for: Groups • ~15 min • 4+ people</p>
+              </div>
+              <div>
+                <button
+                  onClick={() => onStart('deck', selectedQuestionSet)}
+                  className="retro-button w-full px-6 py-4 text-lg float-in stagger-3 bg-[#ffb3ba]">
+                  🎴 Card Shuffle
+                </button>
+                <p className="mt-1 text-xs text-[#3a2388]">Best for: Solo prep • ~5 min • 1-2 people</p>
+              </div>
             </div>
           </div>
 

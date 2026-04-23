@@ -8,10 +8,12 @@ function App() {
   const {
     gameState,
     board,
+    selectedQuestionSet,
     winningSquareIds,
     showBingoModal,
     audioEnabled,
     startGame,
+    setQuestionSet,
     handleSquareClick,
     resetGame,
     dismissModal,
@@ -44,11 +46,16 @@ function App() {
         {gameState === 'start' ?
           <StartScreen
             onStart={startGame}
+            selectedQuestionSet={selectedQuestionSet}
+            onQuestionSetChange={setQuestionSet}
             audioEnabled={audioEnabled}
             onToggleAudio={toggleAudio}
           />
         : gameState === 'deck' ?
-          <CardDeck onBack={resetGame} />
+          <CardDeck
+            onBack={resetGame}
+            questionSetId={selectedQuestionSet}
+          />
         : <>
             <GameScreen
               board={board}
